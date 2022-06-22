@@ -4,6 +4,8 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { allUsersRoute } from '../utils/APIRoutes'
 import Contacts from '../components/Contacts'
+import Welcome from '../components/Welcome'
+import ChatContainer from '../components/ChatContainer'
 
 interface IPros {}
 
@@ -19,12 +21,15 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
   const [contacts, setContacts] = useState<IUser[]>([])
   const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
   const [currentChat, setCurrentChat] = useState<IUser | undefined>(undefined)
+  const [isLoaded, setIsLoaded] = useState(false)
+
   const navigate = useNavigate()
   useEffect(() => {
     if(!localStorage.getItem('chat-app-user')) {
       navigate('/login')
     } else {
       setCurrentUser(JSON.parse(localStorage.getItem('chat-app-user') || ""))
+      setIsLoaded(true)
     }
   },[])
   useEffect(() => {
@@ -48,6 +53,8 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
     <Container>
       <div className='container'>
         <Contacts contacts={contacts} currentUser = {currentUser} changeChat ={handleChatChange} />
+        {/*currentUser에서 전하는것은 내 정보, currentChat에서 전하는것은 내가 클릭한 유저의 정보 */}
+        {isLoaded && currentChat === undefined ? (<Welcome currentUser={currentUser}/>) : (<ChatContainer currentChat ={currentChat}/>)}
       </div>
     </Container> 
   )
