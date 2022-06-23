@@ -1,11 +1,14 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { allUsersRoute } from '../utils/APIRoutes'
+import { allUsersRoute,host } from '../utils/APIRoutes'
 import Contacts from '../components/Contacts'
 import Welcome from '../components/Welcome'
 import ChatContainer from '../components/ChatContainer'
+import {io} from 'socket.io-client'
+
+
 
 interface IPros {}
 
@@ -18,6 +21,8 @@ export interface IUser {
 }
 
 const Chat:React.FC<IPros> = ():JSX.Element => {
+  const socket = useRef<any>()
+
   const [contacts, setContacts] = useState<IUser[]>([])
   const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
   const [currentChat, setCurrentChat] = useState<IUser | undefined>(undefined)
@@ -33,6 +38,12 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
     }
   },[])
   useEffect(() => {
+    if(currentUser) {
+      socket.current = io(host)
+      socket.current.emit('add-user', currentUser._id)
+    }
+  })
+  useEffect(() => {
     const getUsers = async() => {
       if(currentUser) {
         if(currentUser.isAvatarImageSet) {
@@ -47,6 +58,7 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
   },[currentUser])
 
   const handleChatChange = (chat:IUser) => {
+    console.log(currentChat)
     setCurrentChat(chat)
 }
   return(
@@ -54,7 +66,7 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
       <div className='container'>
         <Contacts contacts={contacts} currentUser = {currentUser} changeChat ={handleChatChange} />
         {/*currentUser에서 전하는것은 내 정보, currentChat에서 전하는것은 내가 클릭한 유저의 정보 */}
-        {isLoaded && currentChat === undefined ? (<Welcome currentUser={currentUser}/>) : (<ChatContainer currentChat ={currentChat} currentUser={currentUser}/>)}
+        {isLoaded && currentChat === undefined ? (<Welcome currentUser={currentUser}/>) : (<ChatContainer currentChat ={currentChat} currentUser={currentUser} socket={socket}/>)}
       </div>
     </Container> 
   )

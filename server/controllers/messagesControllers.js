@@ -20,10 +20,11 @@ const getAllMessage = asyncHandler ( async (req,res,next) => {
     try {
         const {from, to} = req.body
         const messages = await Messages.find({
-            user: {
+            users: {
                 $all: [from,to],
             },
         }).sort({updatedAt:1 })
+        console.log(messages)
         const projectedMessages = messages.map((msg) => {
             return {
                 fromSelf: msg.sender.toString() === from,

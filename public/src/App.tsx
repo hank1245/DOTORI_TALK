@@ -11,7 +11,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/chat' element={<Chat/>}/>
+        <Route path='/' element={<Chat/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/setAvatar' element={<SetAvatar/>}/>
