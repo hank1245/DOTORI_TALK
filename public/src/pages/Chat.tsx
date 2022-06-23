@@ -54,7 +54,7 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
       <div className='container'>
         <Contacts contacts={contacts} currentUser = {currentUser} changeChat ={handleChatChange} />
         {/*currentUser에서 전하는것은 내 정보, currentChat에서 전하는것은 내가 클릭한 유저의 정보 */}
-        {isLoaded && currentChat === undefined ? (<Welcome currentUser={currentUser}/>) : (<ChatContainer currentChat ={currentChat}/>)}
+        {isLoaded && currentChat === undefined ? (<Welcome currentUser={currentUser}/>) : (<ChatContainer currentChat ={currentChat} currentUser={currentUser}/>)}
       </div>
     </Container> 
   )

@@ -1,18 +1,43 @@
-import React from 'react'
+import React, {useState,useEffect} from 'react'
 import { IUser } from '../pages/Chat'
 import styled from 'styled-components'
 import Logout from './Logout' 
 import ChatInput from './ChatInput'
 import Messages from './Messages'
+import axios from 'axios'
+import { getAllMessagesRoute, sendMessageRoute } from '../utils/APIRoutes'
+
 
 interface Props {
     currentChat: IUser | undefined
+    currentUser: IUser | undefined
 }
 
-const ChatContainer = ({currentChat}:Props) => {
+interface IMessage {
+  fromSelf: boolean
+  message: string
+}
+
+const ChatContainer = ({currentChat,currentUser}:Props) => {
+    const [messages, setMessages] = useState<IMessage[]>([])
+
+    useEffect(() => {
+      const updateChat = async () => {
+        const {data} = await axios.post(getAllMessagesRoute, {
+          from: currentUser?._id,
+          to: currentChat?._id,
+        })
+        setMessages(data)
+      }
+      updateChat()
+    },[currentChat,messages])
     
     const handleSendMessage = async (msg:string) => {
-        
+         await axios.post(sendMessageRoute, {
+          from: currentUser?._id,
+          to: currentChat?._id,
+          message: msg, 
+         })
     }
 
     return (
@@ -30,7 +55,23 @@ const ChatContainer = ({currentChat}:Props) => {
             </div>
             <Logout/>
           </div>
-          <Messages/>
+         <div className='chat-messages'>
+          {
+            messages.map((message) => {
+              return (
+                <div>
+                  <div className={`message ${message.fromSelf ? "sended" : "received"}`}>
+                    <div className="content">
+                      <p>
+                        {message.message}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          }
+         </div>
           <ChatInput handleSendMessage = {handleSendMessage}/>
         </Container>
       );
@@ -100,7 +141,7 @@ const Container = styled.div`
         background-color: #4f04ff21;
       }
     }
-    .recieved {
+    .received {
       justify-content: flex-start;
       .content {
         background-color: #9900ff20;
