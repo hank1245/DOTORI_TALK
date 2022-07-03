@@ -21,19 +21,6 @@ mongoose
     console.log(err.message);
   });
 
-// Serve frontend
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../public/build")));
-
-  app.get("*", (req, res) =>
-    res.sendFile(
-      path.resolve(__dirname, "../", "public", "build", "index.html")
-    )
-  );
-} else {
-  app.get("/", (req, res) => res.send("Please set to production"));
-}
-
 app.use(errorHandler);
 
 const server = app.listen(process.env.PORT, () =>
@@ -42,7 +29,7 @@ const server = app.listen(process.env.PORT, () =>
 
 const io = socket(server, {
   cors: {
-    origin: ["https://dotoritalk-client.vercel.app/"],
+    origin: "https://dotoritalk.vercel.app",
     credentials: true,
   },
 });

@@ -58,9 +58,9 @@ const loginUser = asyncHandler(async (req, res) => {
       avatarImage: user.avatarImage,
     });
   } else {
-    console.log("coming");
+    console.log("hi");
     res.json({ status: false });
-    throw new Error("Invalid Credentials");
+    throw new Error("유저정보 없음");
   }
 });
 
