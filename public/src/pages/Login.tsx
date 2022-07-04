@@ -28,7 +28,7 @@ const Login: React.FC<IProps>  = () => {
 
     useEffect(() => {
       if(localStorage.getItem('chat-app-user')) {
-        navigate('/chat')
+        navigate('/')
       }
     },[])
 

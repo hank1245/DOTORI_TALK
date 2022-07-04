@@ -2,6 +2,7 @@ import React, {useState,useEffect} from 'react'
 import {IUser} from '../pages/Chat'
 import styled from 'styled-components'
 import Logo from '../assets/logo.svg'
+import { useNavigate } from 'react-router-dom'
 
 interface IProps {
     contacts: IUser[]
@@ -14,6 +15,8 @@ const Contacts: React.FC<IProps> = ({contacts, currentUser, changeChat}) => {
     const [currentUserImage, setCurrentUserImage] = useState<string | undefined>(undefined)
     const [currentSelected, setCurrentSelected] = useState<number | undefined>(undefined)
 
+    const navigate = useNavigate()
+
     useEffect(() => {
         if(currentUser) {
             setCurrentUserImage(currentUser.avatarImage)
@@ -24,6 +27,7 @@ const Contacts: React.FC<IProps> = ({contacts, currentUser, changeChat}) => {
         console.log(contact)
         setCurrentSelected(index)
         changeChat(contact)
+        navigate('/chat')
     }
     return (
         <>
@@ -74,6 +78,8 @@ const Contacts: React.FC<IProps> = ({contacts, currentUser, changeChat}) => {
 } 
 
 const Container = styled.div`
+  width:100%;
+  height:80%;
   display: grid;
   grid-template-rows: 10% 75% 15%;
   overflow: hidden;
@@ -139,7 +145,7 @@ const Container = styled.div`
     gap: 2rem;
     .avatar {
       img {
-        height: 4rem;
+        height: 3.8rem;
         max-inline-size: 100%;
       }
     }
