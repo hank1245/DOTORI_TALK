@@ -3,18 +3,19 @@ import {IUser} from '../pages/Chat'
 import styled from 'styled-components'
 import Logo from '../assets/logo.svg'
 import { useNavigate } from 'react-router-dom'
+import {setCurrentChat} from '../features/currentChatSlice'
+import { useDispatch } from 'react-redux'
 
 interface IProps {
     contacts: IUser[]
     currentUser: IUser | undefined
-    changeChat: (contact:IUser) => void
 }
 
-const Contacts: React.FC<IProps> = ({contacts, currentUser, changeChat}) => {
+const Contacts: React.FC<IProps> = ({contacts, currentUser}) => {
     const [currentUserName, setCurrentUserName] = useState<string | undefined>(undefined)
     const [currentUserImage, setCurrentUserImage] = useState<string | undefined>(undefined)
     const [currentSelected, setCurrentSelected] = useState<number | undefined>(undefined)
-
+    const dispatch = useDispatch()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -25,61 +26,61 @@ const Contacts: React.FC<IProps> = ({contacts, currentUser, changeChat}) => {
     },[currentUser])
     const changeCurrentChat = (index: number, contact: IUser) => {
         console.log(contact)
+        dispatch(setCurrentChat(contact))
         setCurrentSelected(index)
-        changeChat(contact)
         navigate('/chat')
     }
     return (
         <>
-        {currentUserImage && currentUserImage && (
-          <Container>
-            <div className="brand">
-              <img src={Logo} alt="logo" />
-              <h3>DOTORI Talk</h3>
-            </div>
-            <div className="contacts">
-              {contacts.map((contact, index) => {
-                return (
-                  <div
-                    key={contact._id}
-                    className={`contact ${
-                      index === currentSelected ? "selected" : ""
-                    }`}
-                    onClick={() => changeCurrentChat(index,contact)}
-                  >
-                    <div className="avatar">
-                      <img
-                        src={`data:image/svg+xml;base64,${contact.avatarImage}`}
-                        alt=""
-                      />
-                    </div>
-                    <div className="username">
-                      <h3>{contact.name}</h3>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="current-user">
-              <div className="avatar">
-                <img
-                  src={`data:image/svg+xml;base64,${currentUserImage}`}
-                  alt="avatar"
-                />
+          {currentUserImage && currentUserImage && (
+            <Container>
+              <div className="brand">
+                <img src={Logo} alt="logo" />
+                <h3>DOTORI Talk</h3>
               </div>
-              <div className="username">
-                <h2>{currentUserName}</h2>
+              <div className="contacts">
+                {contacts.map((contact, index) => {
+                  return (
+                    <div
+                      key={contact._id}
+                      className={`contact ${
+                        index === currentSelected ? "selected" : ""
+                      }`}
+                      onClick={() => changeCurrentChat(index,contact)}
+                    >
+                      <div className="avatar">
+                        <img
+                          src={`data:image/svg+xml;base64,${contact.avatarImage}`}
+                          alt=""
+                        />
+                      </div>
+                      <div className="username">
+                        <h3>{contact.name}</h3>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-          </Container>
-        )}
+              <div className="current-user">
+                <div className="avatar">
+                  <img
+                    src={`data:image/svg+xml;base64,${currentUserImage}`}
+                    alt="avatar"
+                  />
+                </div>
+                <div className="username">
+                  <h2>{currentUserName}</h2>
+                </div>
+              </div>
+            </Container>
+          )}
       </>
     )
 } 
 
 const Container = styled.div`
   width:100%;
-  height:80%;
+  height:100%;
   display: grid;
   grid-template-rows: 10% 75% 15%;
   overflow: hidden;

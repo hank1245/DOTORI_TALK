@@ -73,35 +73,37 @@ const ChatContainer = ({currentChat,currentUser, socket}:Props) => {
 
     return (
         <Container>
-          <div className="chat-header">
-            <div className="user-details">
-              <div className="avatar">
-                <img
-                    src={`data:image/svg+xml;base64,${currentChat?.avatarImage}`}
-                    alt=""/>
+          <div>
+            <div className="chat-header">
+              <div className="user-details">
+                <div className="avatar">
+                  <img
+                      src={`data:image/svg+xml;base64,${currentChat?.avatarImage}`}
+                      alt=""/>
+                </div>
+                <div className="username">
+                  <h3>{currentChat?.name}</h3>
+                </div>
               </div>
-              <div className="username">
-                <h3>{currentChat?.name}</h3>
-              </div>
+              <Logout/>
             </div>
-            <Logout/>
-          </div>
-         <div className='chat-messages'>
-          {
-            messages.map((message) => {
-              return (
-                <div ref={scrollRef} key={uuidv4()}>
-                  <div className={`message ${message.fromSelf ? "sended" : "received"}`}>
-                    <div className="content">
-                      <p>
-                        {message.message}
-                      </p>
+            <div className='chat-messages'>
+            {
+              messages.map((message) => {
+                return (
+                  <div ref={scrollRef} key={uuidv4()}>
+                    <div className={`message ${message.fromSelf ? "sended" : "received"}`}>
+                      <div className="content">
+                        <p>
+                          {message.message}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-            })
-          }
+                )
+              })
+            }
+            </div>
          </div>
           <ChatInput handleSendMessage = {handleSendMessage}/>
         </Container>
@@ -109,13 +111,11 @@ const ChatContainer = ({currentChat,currentUser, socket}:Props) => {
 }
 
 const Container = styled.div`
-  display: grid;
-  grid-template-rows: 10% 80% 10%;
-  gap: 0.1rem;
+  width: 100%;
   overflow: hidden;
-  @media screen and (min-width: 720px) and (max-width: 1080px) {
-    grid-template-rows: 15% 70% 15%;
-  }
+  display:flex;
+  flex-direction:column;
+  justify-content: space-between;
   .chat-header {
     display: flex;
     justify-content: space-between;
@@ -138,7 +138,7 @@ const Container = styled.div`
     }
   }
   .chat-messages {
-    padding: 1rem 2rem;
+    padding: 3rem 2rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;

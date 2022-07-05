@@ -7,6 +7,8 @@ import Contacts from '../components/Contacts'
 import Welcome from '../components/Welcome'
 import ChatContainer from '../components/ChatContainer'
 import {io} from 'socket.io-client'
+import { useSelector } from 'react-redux'
+import { RootState } from '../app/store'
 
 
 
@@ -21,12 +23,12 @@ export interface IUser {
 }
 
 const Chat:React.FC<IPros> = ():JSX.Element => {
+  //useRef() hook 으로 만든 변수는 컴포넌트의 생애주기를 통해 유지되지만, .current 프로퍼티의 값이 변경되도 컴포넌트 리렌더링을 발생 시키지 않는다.
   const socket = useRef<any>()
 
-  const [contacts, setContacts] = useState<IUser[]>([])
   const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
-  const [currentChat, setCurrentChat] = useState<IUser | undefined>(undefined)
   const [isLoaded, setIsLoaded] = useState(false)
+  const {currentChat} = useSelector((state:RootState) =>state.currentChat)
 
   const navigate = useNavigate()
   useEffect(() => {
@@ -41,30 +43,13 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
     if(currentUser) {
       socket.current = io(host)
       socket.current.emit('add-user', currentUser._id)
+      console.log(socket)
     }
   })
-  useEffect(() => {
-    const getUsers = async() => {
-      if(currentUser) {
-        if(currentUser.isAvatarImageSet) {
-          const {data} = await axios.get(`${allUsersRoute}/${currentUser._id}`)
-          setContacts(data)
-        } else {
-          navigate('/setAvatar')
-        }
-      }
-    }
-    getUsers()
-  },[currentUser])
 
-  const handleChatChange = (chat:IUser) => {
-    console.log(currentChat)
-    setCurrentChat(chat)
-}
   return(
     <Container>
       <div className='container'>
-        <Contacts contacts={contacts} currentUser = {currentUser} changeChat ={handleChatChange} />
         {/*currentUser에서 전하는것은 내 정보, currentChat에서 전하는것은 내가 클릭한 유저의 정보 */}
         {isLoaded && currentChat === undefined ? (<Welcome currentUser={currentUser}/>) : (<ChatContainer currentChat ={currentChat} currentUser={currentUser} socket={socket}/>)}
       </div>
@@ -86,10 +71,6 @@ background-color: #131324;
   width: 85vw;
   background-color: #00000076;
   display: grid;
-  grid-template-columns: 25% 75%;
-  @media screen and (min-width: 720px) and (max-width: 1080px) {
-    grid-template-columns: 35% 65%;
-  }
 }
 `
 

@@ -25,24 +25,24 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
 
   const [contacts, setContacts] = useState<IUser[]>([])
   const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
-  const [currentChat, setCurrentChat] = useState<IUser | undefined>(undefined)
-  const [isLoaded, setIsLoaded] = useState(false)
 
   const navigate = useNavigate()
+  
   useEffect(() => {
     if(!localStorage.getItem('chat-app-user')) {
       navigate('/login')
     } else {
       setCurrentUser(JSON.parse(localStorage.getItem('chat-app-user') || ""))
-      setIsLoaded(true)
     }
   },[])
+
   useEffect(() => {
     if(currentUser) {
       socket.current = io(host)
       socket.current.emit('add-user', currentUser._id)
     }
   })
+
   useEffect(() => {
     const getUsers = async() => {
       if(currentUser) {
@@ -57,13 +57,11 @@ const Chat:React.FC<IPros> = ():JSX.Element => {
     getUsers()
   },[currentUser])
 
-  const handleChatChange = (chat:IUser) => {
-    setCurrentChat(chat)
-}
+
   return(
     <Container>
       <div className='container'>
-        <Contacts contacts={contacts} currentUser = {currentUser} changeChat ={handleChatChange} />
+        <Contacts contacts={contacts} currentUser = {currentUser} />
       </div>
     </Container> 
   )
@@ -79,9 +77,14 @@ gap: 1rem;
 align-items: center;
 background-color: #131324;
     .container {
-        width:80%;
+        width:40%;
         height: 80%;
     }
+  @media (max-width:900px) {
+    .container {
+      width:80%;
+    }
+  }
 }
 `
 

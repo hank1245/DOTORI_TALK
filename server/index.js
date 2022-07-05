@@ -40,13 +40,14 @@ global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
+    console.log(onlineUsers);
   });
   //eventEmitter socket은 EventEmitter class 확장. on으로 event listening emit으로 호출.
   socket.on("send-msg", (data) => {
     const sendUserSocket = onlineUsers.get(data.to);
     console.log(sendUserSocket);
     if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-received", data.message);
+      socket.to(sendUserSocket).emit("msg-received", data.msg);
     }
   });
 });
